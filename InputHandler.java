@@ -7,14 +7,31 @@ public class InputHandler {
         scanner = new Scanner(System.in);
     }
 
-    public SudokuMove getPlayerInput(){
+    public String getPlayerInput(){
+        String input;
+
+        while(true){
+            System.out.print("Type 'move' to make a move or 'submit' to submit your solution: ");
+            input = scanner.nextLine();
+
+            if(input.equals("move") || input.equals("submit")){
+                break;
+            }
+
+            System.out.println("Invalid input");
+        }
+
+        return input;
+    }
+
+    public SudokuMove getPlayerMove(){
         int row;
         int col;
         int value;
 
         while(true){
 
-            System.out.print("Enter move 'row column value' each in range 1-9: ");
+            System.out.print("Enter your move 'row column value' each in range 1-9: ");
             String move = scanner.nextLine();
 
             String[] split = move.split(" ");
