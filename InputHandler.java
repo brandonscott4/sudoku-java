@@ -14,7 +14,7 @@ public class InputHandler {
 
         while(true){
 
-            System.out.println("Enter move 'row column value' each in range 1-9");
+            System.out.print("Enter move 'row column value' each in range 1-9: ");
             String move = scanner.nextLine();
 
             String[] split = move.split(" ");

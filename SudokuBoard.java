@@ -28,6 +28,10 @@ public class SudokuBoard{
         }
     }
 
+    public int[][] getBoard(){
+        return board;
+    }
+
     public void displayBoard(){
         for(int i = 0; i < 9; i++){
             if(i != 0 || i != 8){
@@ -41,6 +45,10 @@ public class SudokuBoard{
                 }
             }
         }
+        System.out.println("");
     }
 
+    public void makeMove(SudokuMove move){
+        board[move.getRow()][move.getCol()] = move.getValue();
+    }
 }
