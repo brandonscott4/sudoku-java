@@ -54,11 +54,6 @@ public class Validator {
     }
     
     public boolean checkMove(SudokuBoard gameBoard, SudokuMove move){
-        //setting a cell value to empty (0) is always valid
-        if(move.getValue() == 0){
-            return true;
-        }
-
         int[] rowValues = getRowValues(gameBoard, move.getRow());
         int[] colValues = getColumnValues(gameBoard, move.getCol());
         int[] squareValues = getSquareValues(gameBoard, move.getRow(), move.getCol());

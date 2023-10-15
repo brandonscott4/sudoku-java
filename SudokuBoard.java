@@ -44,22 +44,6 @@ public class SudokuBoard{
         return board;
     }
 
-    public void displayBoard(){
-        for(int i = 0; i < 9; i++){
-            if(i != 0 || i != 8){
-                System.out.println("");
-            }
-            for(int j = 0; j < 9; j++){
-                if(j != 8){
-                    System.out.print(board[i][j] + "-");
-                } else{
-                    System.out.print(board[i][j]);
-                }
-            }
-        }
-        System.out.println("");
-    }
-
     public void makeMove(SudokuMove move){
         board[move.getRow()][move.getCol()] = move.getValue();
     }
