@@ -1,11 +1,13 @@
 public class SudokuGame {
     private SudokuBoard board;
+    private SudokuGUI gui;
     private InputHandler ih;
     private Validator validator;
     private int lives;
 
     public SudokuGame(){
          board = new SudokuBoard();
+         gui = new SudokuGUI(board);
          ih = new InputHandler();
          validator = new Validator();
          lives = 3;
