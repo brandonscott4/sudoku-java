@@ -80,60 +80,17 @@ public class Validator {
     }
 
     public boolean validBoard(SudokuBoard gameBoard){
-        //each number should have 27 occurences as as should appear 9 times in each row/column/square
-        HashMap<Integer, Integer> numberOccurrences = new HashMap<Integer, Integer>();
-
-        for(int i=0; i < 9; i++){
-            numberOccurrences.put(i+1, 0);
-        }
-    
-        //for rows
-        for(int i=0; i < 9; i++){
-            int[] rowValues = getRowValues(gameBoard, i);
-            for(int j=0; j < 9; j++){
-                int value = rowValues[j];
-                if(value == 0){
+        int[][] playerBoard = gameBoard.getBoard();
+        int[][] solvedBoard = gameBoard.getSolvedBoard();
+        for(int i=0; i<9; i++){
+            for(int j=0; j<9; j++){
+                if(playerBoard[i][j] != solvedBoard[i][j]){
                     return false;
                 }
-                numberOccurrences.put(value, numberOccurrences.get(value) + 1);
             }
-        }
-
-        //for columns
-        for(int i=0; i < 9; i++){
-            int[] colValues = getColumnValues(gameBoard, i);
-            for(int j=0; j < 9; j++){
-                int value = colValues[j];
-                if(value == 0){
-                    return false;
-                }
-                numberOccurrences.put(value, numberOccurrences.get(value) + 1);
-            }
-        }
-
-        //for squares
-        for(int i=0; i < 9; i+=3){
-            for(int j=0; j < 9; j+=3){
-                int[] squareValues = getSquareValues(gameBoard, i, j);
-                for(int k=0; k < 9; k++){
-                    int value = squareValues[k];
-                    if(value == 0){
-                        return false;
-                    }
-                    numberOccurrences.put(value, numberOccurrences.get(value) + 1);
-                }
-            }
-        }
-
-        //check occurences are 27 for each number 1-9
-        for(int i=0; i < 9; i++){
-            int occurences = numberOccurrences.get(i+1);
-            if(occurences != 27){
-                return false;
-            }
-        }
-
-        return true;
+       }
+       
+       return true;
     }
 
     public boolean solveWithBacktracking(SudokuBoard gameBoard){
@@ -182,7 +139,7 @@ public class Validator {
 
     public boolean checkUserMove(SudokuBoard board, SudokuMove move){
         int[][] solvedBoard = board.getSolvedBoard();
-        
+
         if(solvedBoard[move.getRow()][move.getCol()] == move.getValue()){
             return true;
         }
