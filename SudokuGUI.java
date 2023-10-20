@@ -25,7 +25,7 @@ public class SudokuGUI{
 
     private SudokuGame game;
 
-    SudokuGUI(SudokuBoard board, SudokuGame game){
+    public SudokuGUI(SudokuBoard board, SudokuGame game){
         this.game = game;
         this.board = board;
         int[][] boardValues = board.getBoard();
@@ -66,7 +66,8 @@ public class SudokuGUI{
                 sudokuGrid[i][j] = btn;
                 btn.setPreferredSize(new Dimension(60, 60));
                 btn.setBackground(Color.white);
-                btn.addActionListener(new ActionListener() {
+                if(btn.getText() == ""){
+                    btn.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         JButton clickedButton = (JButton) e.getSource();
                         clickedButton.setBackground(Color.lightGray);
@@ -84,6 +85,7 @@ public class SudokuGUI{
                         }
                     }
                 });
+                }
                 gridPanel.add(sudokuGrid[i][j]);
             }
         }
@@ -104,9 +106,10 @@ public class SudokuGUI{
                         JButton clickedButton = (JButton) e.getSource();
                         if(currentCellRow != -1 && currentCellCol != -1){
                             SudokuMove move = new SudokuMove(currentCellRow, currentCellCol, Integer.parseInt(clickedButton.getText()));
-                            boolean validMove = validator.checkMove(board, move);
+                            boolean validMove = validator.checkUserMove(board, move);
 
                             if(validMove){
+                                selectedBtn.setEnabled(false);
                                 board.makeMove(move);
                                 sudokuGrid[currentCellRow][currentCellCol].setText(clickedButton.getText());
                             } else{
@@ -135,7 +138,7 @@ public class SudokuGUI{
         infoPanel = new JPanel(new BorderLayout());
         gameMessage = new JTextField("Welcome to Sudoku!");
         infoPanel.add(gameMessage, BorderLayout.CENTER);
-        checkWin = new JButton("Submit");
+        checkWin = new JButton("Submit Solution");
         checkWin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
                 boolean validBoard = validator.validBoard(board);

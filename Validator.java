@@ -3,7 +3,7 @@ import java.util.HashMap;
 public class Validator {
 
     private int[] getRowValues(SudokuBoard gameBoard, int row){
-        int[][] board = gameBoard.getBoard();
+        int[][] board = gameBoard.getSolvedBoard();
         int[] rowValues = new int[9];
         
         for(int i=0; i < 9; i++){
@@ -14,7 +14,7 @@ public class Validator {
     }
 
     private int[] getColumnValues(SudokuBoard gameBoard, int col){
-        int[][] board = gameBoard.getBoard();
+        int[][] board = gameBoard.getSolvedBoard();
         int[] columnValues = new int[9];
 
         for(int i=0; i < 9; i++){
@@ -25,7 +25,7 @@ public class Validator {
     }
 
     private int[] getSquareValues(SudokuBoard gameBoard, int row, int col){
-        int[][] board = gameBoard.getBoard();
+        int[][] board = gameBoard.getSolvedBoard();
         int i, j;
         
         int[] squareValues = new int[9];
@@ -134,6 +134,60 @@ public class Validator {
         }
 
         return true;
+    }
+
+    public boolean solveWithBacktracking(SudokuBoard gameBoard){
+        int[][] solvedBoard = gameBoard.getSolvedBoard();
+
+        int[] emptyCell = findEmptyCell(solvedBoard);
+
+        if(emptyCell == null){
+            //board solved
+            return true;
+        }
+
+        int row = emptyCell[0];
+        int col = emptyCell[1];
+
+        for(int value=1; value<=9; value++){
+            SudokuMove move = new SudokuMove(row, col, value);
+            if(checkMove(gameBoard, move)){
+                solvedBoard[row][col] = value;
+
+                if(solveWithBacktracking(gameBoard)){
+                    return true;
+                }
+
+                solvedBoard[row][col] = 0;
+            }
+        }
+
+        //will trigger backtracking as no value works for this cell in current board
+        return false;
+    }
+
+    private int[] findEmptyCell(int[][] board){
+        int[] emptyCell = new int[2];
+        for(int i=0; i<9; i++){
+            for(int j=0; j<9; j++){
+                if(board[i][j] == 0){
+                    emptyCell[0] = i;
+                    emptyCell[1] = j;
+                    return emptyCell;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean checkUserMove(SudokuBoard board, SudokuMove move){
+        int[][] solvedBoard = board.getSolvedBoard();
+        
+        if(solvedBoard[move.getRow()][move.getCol()] == move.getValue()){
+            return true;
+        }
+
+        return false;
     }
 
 }

@@ -1,11 +1,18 @@
 public class SudokuBoard{
 
     private int[][] board;
+    private int[][] solvedBoard;
+    private Validator validator;
 
     public SudokuBoard(){
         board = new int[9][9];
+        solvedBoard = new int[9][9];
+        validator = new Validator();
         //calling here as only testing with one puzzle for now
         initialize();
+        validator.solveWithBacktracking(this);
+        printSudokuBoard(solvedBoard);
+
     }
 
     public void initialize(){
@@ -36,6 +43,7 @@ public class SudokuBoard{
         for(int i = 0; i < 9; i++){
             for(int j = 0; j < 9; j++){
                 board[i][j] = initialValues[i][j];
+                solvedBoard[i][j] = initialValues[i][j];
             }
         }
     }
@@ -44,7 +52,26 @@ public class SudokuBoard{
         return board;
     }
 
+    public int[][] getSolvedBoard(){
+        return solvedBoard;
+    }
+
     public void makeMove(SudokuMove move){
         board[move.getRow()][move.getCol()] = move.getValue();
+    }
+    
+    public void printSudokuBoard(int[][] solvedBoard) {
+        for (int row = 0; row < 9; row++) {
+            if (row % 3 == 0 && row != 0) {
+                System.out.println("-----------|-----------|-----------");
+            }
+            for (int col = 0; col < 9; col++) {
+                if (col % 3 == 0 && col != 0) {
+                    System.out.print("| ");
+                }
+                System.out.print(solvedBoard[row][col] + " ");
+            }
+            System.out.println();
+        }
     }
 }
