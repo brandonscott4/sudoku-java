@@ -12,7 +12,12 @@ public class SudokuBoard{
         initialize();
         validator.solveWithBacktracking(this);
         printSudokuBoard(solvedBoard);
+    }
 
+    public SudokuBoard(int[][] board, int[][] solvedBoard){
+        this.board = board;
+        this.solvedBoard = solvedBoard;
+        validator = new Validator();
     }
 
     public void initialize(){
@@ -74,4 +79,5 @@ public class SudokuBoard{
             System.out.println();
         }
     }
+
 }

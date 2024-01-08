@@ -13,9 +13,12 @@ public class SudokuGUI{
     private JPanel inputPanel;
     private JButton[][] inputGrid;
     private SudokuBoard board;
+    private int lives;
     private JPanel infoPanel;
-    private JTextField gameMessage;
+    private JLabel gameMessage;
     private JButton checkWin;
+    private JButton save;
+    private JPanel infoButtonPanel;
 
     private int currentCellRow;
     private int currentCellCol;
@@ -28,6 +31,7 @@ public class SudokuGUI{
     public SudokuGUI(SudokuBoard board, SudokuGame game){
         this.game = game;
         this.board = board;
+        lives = game.getLives();
         int[][] boardValues = board.getBoard();
 
         currentCellRow = -1;
@@ -38,7 +42,6 @@ public class SudokuGUI{
         frame = new JFrame("Sudoku");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
-        frame.setLayout(new BorderLayout());
 
         initializeSudokuGrid(boardValues);
         frame.add(gridPanel, BorderLayout.CENTER);
@@ -50,7 +53,15 @@ public class SudokuGUI{
         frame.add(infoPanel, BorderLayout.SOUTH);
 
         frame.pack();
+        frame.setLayout(new BorderLayout());
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        if(lives == 0){
+            endGame();
+            setinfoMessage("Game Over, you ran out of lives.");
+        }
+
     }
 
     private void initializeSudokuGrid(int[][] boardValues){
@@ -71,7 +82,7 @@ public class SudokuGUI{
                     public void actionPerformed(ActionEvent e) {
                         JButton clickedButton = (JButton) e.getSource();
                         clickedButton.setBackground(Color.lightGray);
-                        if(selectedBtn != null){
+                        if(selectedBtn != null && selectedBtn != clickedButton){
                             selectedBtn.setBackground(Color.white);
                         }
                         selectedBtn = clickedButton;
@@ -134,10 +145,15 @@ public class SudokuGUI{
         }
     }
 
-    private void initalizeInfoPanel(){
-        infoPanel = new JPanel(new BorderLayout());
-        gameMessage = new JTextField("Welcome to Sudoku!");
-        infoPanel.add(gameMessage, BorderLayout.CENTER);
+     private void initalizeInfoButtonPanel(){
+        save = new JButton("Save");
+        save.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                SaveHandler handler = new SaveHandler();
+                handler.saveGame(board.getBoard(), game.getLives(), board.getSolvedBoard());
+            }
+        });
+
         checkWin = new JButton("Submit Solution");
         checkWin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
@@ -151,7 +167,17 @@ public class SudokuGUI{
             }
         });
 
-        infoPanel.add(checkWin, BorderLayout.EAST);
+        infoButtonPanel = new JPanel(new FlowLayout());
+        infoButtonPanel.add(save);
+        infoButtonPanel.add(checkWin);
+    }
+
+    private void initalizeInfoPanel(){
+        infoPanel = new JPanel(new BorderLayout());
+        gameMessage = new JLabel("Welcome to Sudoku!");
+        initalizeInfoButtonPanel();
+        infoPanel.add(gameMessage, BorderLayout.CENTER);
+        infoPanel.add(infoButtonPanel, BorderLayout.EAST);
     }
 
     private void setinfoMessage(String msg){

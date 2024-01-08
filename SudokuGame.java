@@ -4,9 +4,15 @@ public class SudokuGame {
     private int lives;
 
     public SudokuGame(){
+         lives = 3;
          board = new SudokuBoard();
          gui = new SudokuGUI(board, this);
-         lives = 3;
+    }
+
+    public SudokuGame(SudokuSave save){
+        lives = save.getLives();
+        board = new SudokuBoard(save.getBoard(), save.getSolvedBoard());
+        gui = new SudokuGUI(board, this);
     }
     
     public int getLives(){
@@ -15,9 +21,5 @@ public class SudokuGame {
 
     public void removeLife(){
         lives--;
-    }
-    
-    public static void main(String[] args) {
-        SudokuGame game = new SudokuGame();
     }
 }
