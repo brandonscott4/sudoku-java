@@ -16,6 +16,7 @@ public class SudokuGUI{
     private int lives;
     private JPanel infoPanel;
     private JLabel gameMessage;
+    private JButton back;
     private JButton checkWin;
     private JButton save;
     private JPanel infoButtonPanel;
@@ -40,7 +41,7 @@ public class SudokuGUI{
         validator = new Validator();
 
         frame = new JFrame("Sudoku");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setResizable(false);
 
         initializeSudokuGrid(boardValues);
@@ -146,6 +147,14 @@ public class SudokuGUI{
     }
 
      private void initalizeInfoButtonPanel(){
+        back = new JButton("Back");
+        back.setVisible(false);
+        back.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                frame.dispose();
+            }
+        });
+
         save = new JButton("Save");
         save.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
@@ -168,6 +177,7 @@ public class SudokuGUI{
         });
 
         infoButtonPanel = new JPanel(new FlowLayout());
+        infoButtonPanel.add(back);
         infoButtonPanel.add(save);
         infoButtonPanel.add(checkWin);
     }
@@ -200,5 +210,7 @@ public class SudokuGUI{
         }
 
         checkWin.setEnabled(false);
+
+        back.setVisible(true);
     }
 }

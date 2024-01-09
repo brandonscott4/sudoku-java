@@ -11,22 +11,29 @@ public class MainMenuGUI {
     private JButton newGame;
     private JButton loadGame;
     private JPanel buttonPanel;
+    private JLabel errorMsg;
 
     public MainMenuGUI(){
         frame = new JFrame("Sudoku Menu");
         panel = new JPanel(new BorderLayout());
         buttonPanel = new JPanel(new FlowLayout());
         title = new JLabel("Sudoku", SwingConstants.CENTER);
+        errorMsg = new JLabel("", SwingConstants.CENTER);
+        errorMsg.setForeground(Color.RED);
         newGame = new JButton("New Game");
         loadGame = new JButton("Load");
 
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300,150);
+        frame.setSize(300,130);
         frame.setResizable(false);
         frame.setLayout(new BorderLayout());
 
         newGame.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
+                if(errorMsg.getText().length() != 0){
+                    errorMsg.setText("");
+                }
                 SudokuGame game = new SudokuGame();
             }
         });
@@ -35,9 +42,10 @@ public class MainMenuGUI {
             public void actionPerformed(ActionEvent e){
                 SaveHandler handler = new SaveHandler();
                 SudokuSave save = handler.loadGame();
-                //need to add visual response to no save
                 if(save.getNoSave() == false){
                     SudokuGame game = new SudokuGame(save);
+                } else {
+                    errorMsg.setText("No save to load");
                 }
             }
         });
@@ -47,6 +55,7 @@ public class MainMenuGUI {
 
         panel.add(title, BorderLayout.NORTH);
         panel.add(buttonPanel, BorderLayout.CENTER);
+        panel.add(errorMsg, BorderLayout.SOUTH);
 
         frame.add(panel, BorderLayout.CENTER);
         frame.setLocationRelativeTo(null);
