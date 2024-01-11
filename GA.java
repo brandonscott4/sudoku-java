@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
 //Maybe move this into a seperate part of the app that focuses on trying different algos
@@ -18,11 +19,13 @@ import java.util.Random;
  */
 
 public class GA {
-    private int populationSize = 10;
-    private int[] fitness = new int[populationSize];
-    private int generations = 100;
+    private final int populationSize = 10;
+    private final int generations = 100;
+    private final int tournamentSize = 3;
     //mutation rate, crossover rate?
+
     private ArrayList<int[][]> population = new ArrayList<>();
+    private int[] fitness = new int[populationSize];
     private int[][] initialBoard;
 
     public GA(int[][] board){
@@ -133,11 +136,27 @@ public class GA {
         }
     }
 
-    /* 
     private int tournamentSelection(){
+        Random rand = new Random();
+        HashSet<Integer> indexes = new HashSet<>();
 
+        while(indexes.size() < tournamentSize){
+            indexes.add(rand.nextInt(populationSize));
+        }
+
+        Integer[] indexesArr = indexes.toArray(new Integer[tournamentSize]);
+        int bestSolutionIndex = 0;
+
+        for(int index : indexesArr){
+            if(fitness[index] > fitness[bestSolutionIndex]){
+                bestSolutionIndex = index;
+            }
+        }
+
+        return bestSolutionIndex;
     }
 
+    /*
     private void crossover(){
 
     }
@@ -216,6 +235,7 @@ public class GA {
         GA geneticAlgo = new GA(initialValues);
         geneticAlgo.populate();
         geneticAlgo.fitness();
+        geneticAlgo.tournamentSelection();
     }
 
 }
