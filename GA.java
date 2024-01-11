@@ -1,5 +1,8 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
+
+//Maybe move this into a seperate part of the app that focuses on trying different algos
 
 /*
  * generate initial population
@@ -16,14 +19,17 @@ import java.util.Random;
 
 public class GA {
     private int populationSize = 10;
+    private int[] fitness = new int[populationSize];
     private int generations = 100;
     //mutation rate, crossover rate?
     private ArrayList<int[][]> population = new ArrayList<>();
     private int[][] initialBoard;
 
-    public GA(int[][] initialBoard){
-        this.initialBoard =  initialBoard;
+    public GA(int[][] board){
+        this.initialBoard =  board;
     }
+
+    //ISSUE need to make sure only cells WE filled in get mutated and crossed-over as can't change initial puzzle
 
     //generate potential solutions with no duplicates in grids
     private void populate(){
@@ -109,12 +115,25 @@ public class GA {
         }
     }
 
-    /* 
-    //minimization (fitness will be how many incorrect cells)
-    private int fitness(){
 
+    //minimization (fitness will be how many incorrect cells)
+    private void fitness(){
+        int fitnessValue = 0;
+
+        //ISSUE should i only be checking if the cells i have added/populated are invalid?
+        for(int i=0; i<populationSize; i++){
+            int[][] board = population.get(i);
+            for(int j=0; j<9; j++){
+                for(int k=0; k<9; k++){
+                    //check for how many duplicates in rows and columns (I ensured grids contain no duplicates) ... not if the move is valid
+                    fitnessValue = findDuplicates(board);
+                    fitness[i] = fitnessValue;
+                }
+            }
+        }
     }
 
+    /* 
     private int tournamentSelection(){
 
     }
@@ -139,6 +158,48 @@ public class GA {
         return initialBoardCopy;
     }
 
+    private int findDuplicates(int[][] initialBoard){
+        int duplicates = 0;
+
+        for(int i=0; i<9; i++){
+            HashMap<Integer, Integer> columnDuplicates = new HashMap<>();
+            HashMap<Integer, Integer> rowDuplicates = new HashMap<>();
+            for(int j=0; j<9; j++){
+                int rowCell =  initialBoard[i][j];
+                if(rowDuplicates.containsKey(rowCell)){
+                    rowDuplicates.put(rowCell, rowDuplicates.get(rowCell) + 1);
+                } else {
+                    rowDuplicates.put(rowCell, 1);
+                }
+
+                int colCell = initialBoard[j][i];
+                if(columnDuplicates.containsKey(colCell)){
+                    columnDuplicates.put(colCell, columnDuplicates.get(colCell) + 1);
+                } else {
+                    columnDuplicates.put(colCell, 1);
+                }
+
+            }
+
+            for(HashMap.Entry<Integer, Integer> pair : rowDuplicates.entrySet()){
+                int value = pair.getValue();
+                if(value >=2){
+                    duplicates += pair.getValue() - 1 ;
+                }
+            }
+
+            for(HashMap.Entry<Integer, Integer> pair : columnDuplicates.entrySet()){
+                int value = pair.getValue();
+                if(value >=2){
+                    duplicates += pair.getValue() - 1 ;
+                }
+            }
+
+        }
+
+        return duplicates;
+    }
+
     public static void main(String[] args) {
         int[][] initialValues = {
             {6, 8, 0, 0, 0, 7, 0, 0, 0},
@@ -154,6 +215,7 @@ public class GA {
 
         GA geneticAlgo = new GA(initialValues);
         geneticAlgo.populate();
+        geneticAlgo.fitness();
     }
 
 }
