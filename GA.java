@@ -157,59 +157,70 @@ public class GA {
         return bestSolutionIndex;
     }
 
-    /*
+
     //two solutions chosen by tournament selection, swap x squares between the two
     private void crossover(){
+        HashSet<Integer> solutionsIndex = new HashSet<>();
+        
+        while(solutionsIndex.size() < 2){
+            int index = tournamentSelection();
+            solutionsIndex.add(index);
+        }
 
+        Integer[] chosenSolutions = solutionsIndex.toArray(new Integer[0]);
+
+        int[][] solution1 = population.get(chosenSolutions[0]);
+        int[][] solution2 = population.get(chosenSolutions[1]);
+
+        int[] squareIndex = randomSquare();
+        int i = squareIndex[0];
+        int j = squareIndex[1];
+
+        int rowLimit = i+3;
+        int colLimit = j+3;
+
+        int[] tempValues = new int[9];
+
+        int col;
+
+        //store first solutions square values in temp array
+        int index = 0;
+        for(int row = i; row<rowLimit; row++){
+            for(col = j; col<colLimit; col++){
+                tempValues[index] = solution1[row][col];
+                index++;
+            }
+            //reset j
+            col=j;
+        }
+
+        //write solution 2s values into solution1
+        for(int row = i; row<rowLimit; row++){
+            for(col = j; col<colLimit; col++){
+                solution1[row][col] = solution2[row][col];
+            }
+            //reset j
+            col=j;
+        }
+
+        //write solution 1 values into solution2
+        index = 0;
+        for(int row = i; row<rowLimit; row++){
+            for(col = j; col<colLimit; col++){
+                solution2[row][col] = tempValues[index];
+                index++;
+            }
+            //reset j
+            col=j;
+        }    
     }
-    */
 
     //randomly switch two non fixed cells within a random square
     private void mutation(int solutionIndex){
         int[][] solution = population.get(solutionIndex);
-        Random rand = new Random();
-        int randomSqaure = rand.nextInt(9);
-        int i;
-        int j; 
-
-        switch (randomSqaure) {
-            case 0:
-                i=0;
-                j=0;
-                break;
-            case 1:
-                i=0;
-                j=3;
-                break;
-            case 2:
-                i=0;
-                j=6;
-                break;
-            case 3:
-                i=3;
-                j=0;
-                break;
-            case 4:
-                i=3;
-                j=3;
-                break;
-            case 5:
-                i=3;
-                j=6;
-                break;
-            case 6:
-                i=6;
-                j=0;
-                break;
-            case 7:
-                i=6;
-                j=3;
-                break;
-            default:
-                i=6;
-                j=6;
-                break;
-        }
+        int[] squareIndex = randomSquare();
+        int i = squareIndex[0];
+        int j = squareIndex[1]; 
 
         //find originally empty cells within selected square
         ArrayList<int[]> originallyEmptyCells = new ArrayList<>();
@@ -230,6 +241,7 @@ public class GA {
         int[][] squareCells;
         HashSet<int[]> chosenCells = new HashSet<>();
 
+        Random rand = new Random();
         while(chosenCells.size() < 2){
             int index = rand.nextInt(originallyEmptyCells.size());
             chosenCells.add(originallyEmptyCells.get(index));
@@ -242,6 +254,53 @@ public class GA {
         solution[squareCells[0][0]][squareCells[0][1]] = solution[squareCells[1][0]][squareCells[1][1]];
         solution[squareCells[1][0]][squareCells[1][1]] = temp;
 
+    }
+
+    private int[] randomSquare(){
+        int[] index = new int[2];
+        Random rand = new Random();
+        int randomSqaure = rand.nextInt(9);
+
+        switch (randomSqaure) {
+            case 0:
+                index[0] = 0;
+                index[1] = 1;
+                break;
+            case 1:
+                index[0] = 0;
+                index[1] = 3;
+                break;
+            case 2:
+                index[0] = 0;
+                index[1] = 6;
+                break;
+            case 3:
+                index[0] = 3;
+                index[1] = 0;
+                break;
+            case 4:
+                index[0] = 3;
+                index[1] = 3;
+                break;
+            case 5:
+                index[0] = 3;
+                index[1] = 6;
+                break;
+            case 6:
+                index[0] = 6;
+                index[1] = 0;
+                break;
+            case 7:
+                index[0] = 6;
+                index[1] = 3;
+                break;
+            default:
+                index[0] = 6;
+                index[1] = 6;
+                break;
+        }
+
+        return index;
     }
     
     private int[][] deepCopy(int[][] initialBoard){
@@ -315,7 +374,8 @@ public class GA {
         geneticAlgo.fitness();
         geneticAlgo.tournamentSelection();
         //hardcoded for mutation test
-        geneticAlgo.mutation(0);
+        //geneticAlgo.mutation(0);
+        geneticAlgo.crossover();
     }
 
 }
