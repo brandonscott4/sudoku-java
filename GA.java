@@ -22,7 +22,8 @@ public class GA {
     private final int populationSize = 10;
     private final int generations = 100;
     private final int tournamentSize = 3;
-    //mutation rate, crossover rate?
+    private final double crossoverRate = 0.6;
+    private final double mutationRate = 0.1;
 
     private ArrayList<int[][]> population = new ArrayList<>();
     private int[] fitness = new int[populationSize];
@@ -157,14 +158,91 @@ public class GA {
     }
 
     /*
+    //two solutions chosen by tournament selection, swap x squares between the two
     private void crossover(){
 
     }
-
-    private void mutation(){
-        
-    }
     */
+
+    //randomly switch two non fixed cells within a random square
+    private void mutation(int solutionIndex){
+        int[][] solution = population.get(solutionIndex);
+        Random rand = new Random();
+        int randomSqaure = rand.nextInt(9);
+        int i;
+        int j; 
+
+        switch (randomSqaure) {
+            case 0:
+                i=0;
+                j=0;
+                break;
+            case 1:
+                i=0;
+                j=3;
+                break;
+            case 2:
+                i=0;
+                j=6;
+                break;
+            case 3:
+                i=3;
+                j=0;
+                break;
+            case 4:
+                i=3;
+                j=3;
+                break;
+            case 5:
+                i=3;
+                j=6;
+                break;
+            case 6:
+                i=6;
+                j=0;
+                break;
+            case 7:
+                i=6;
+                j=3;
+                break;
+            default:
+                i=6;
+                j=6;
+                break;
+        }
+
+        //find originally empty cells within selected square
+        ArrayList<int[]> originallyEmptyCells = new ArrayList<>();
+        int iLimit = i+3;
+        int jLimit = j+3;
+        for(; i<iLimit; i++){
+            for(; j<jLimit; j++){
+                if(initialBoard[i][j] == 0){
+                    int[] indexes = {i, j};
+                    originallyEmptyCells.add(indexes);
+                }
+            }
+            //reset j
+            j=j-3;
+        }
+
+        //chose two random, original empty cells
+        int[][] squareCells;
+        HashSet<int[]> chosenCells = new HashSet<>();
+
+        while(chosenCells.size() < 2){
+            int index = rand.nextInt(originallyEmptyCells.size());
+            chosenCells.add(originallyEmptyCells.get(index));
+        }
+        
+        squareCells = chosenCells.toArray(new int[0][]);
+
+        int temp = solution[squareCells[0][0]][squareCells[0][1]];
+
+        solution[squareCells[0][0]][squareCells[0][1]] = solution[squareCells[1][0]][squareCells[1][1]];
+        solution[squareCells[1][0]][squareCells[1][1]] = temp;
+
+    }
     
     private int[][] deepCopy(int[][] initialBoard){
         int[][] initialBoardCopy = new int[9][9];
@@ -236,6 +314,8 @@ public class GA {
         geneticAlgo.populate();
         geneticAlgo.fitness();
         geneticAlgo.tournamentSelection();
+        //hardcoded for mutation test
+        geneticAlgo.mutation(0);
     }
 
 }
