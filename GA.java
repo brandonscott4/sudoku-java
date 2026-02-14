@@ -5,23 +5,10 @@ import java.util.Random;
 
 //Maybe move this into a seperate part of the app that focuses on trying different algos
 
-/*
- * generate initial population
-    repeat
-        rank the solutions
-        repeat
-            randomly select two solutions from the population
-            randomly choose a crossover point
-            recombine the solutions to produce n new solutions
-            apply the mutation operator to the solutions
-        until a new population has been produced
-    until a solution is found or the maximum number of generations is reached
- */
-
 public class GA {
-    private final int populationSize = 10;
+    private final int populationSize = 100;
     private final int generations = 100;
-    private final int tournamentSize = 3;
+    private final int tournamentSize = 7;
     private final double crossoverRate = 0.6;
     private final double mutationRate = 0.1;
 
@@ -31,6 +18,47 @@ public class GA {
 
     public GA(int[][] board){
         this.initialBoard =  board;
+    }
+
+    private int[][] solve(){
+        Random rand = new Random();
+    
+        populate();
+        fitness();
+
+        for(int i=0; i < generations; i++){
+            System.out.println("generation: " + i);
+            for(int j=0; j<populationSize; j++){
+                if(rand.nextDouble() <= crossoverRate){
+                    crossover(j);
+                }
+                if(rand.nextDouble() <= mutationRate){
+                    mutation(j);
+                }
+            }
+
+            //recalculate fitness
+            fitness();
+
+            int[][] solved = checkSolved();
+            if(solved.length != 0){
+                return solved;
+            }
+        }
+
+        return new int[0][0];
+
+    }
+
+    private int[][] checkSolved(){
+        for(int i=0; i<populationSize; i++){
+            if(fitness[i] == 0){
+                System.out.println("solved");
+                return population.get(i);
+            }
+        }
+
+        return new int[0][0];
     }
 
     //ISSUE need to make sure only cells WE filled in get mutated and crossed-over as can't change initial puzzle
@@ -146,10 +174,10 @@ public class GA {
         }
 
         Integer[] indexesArr = indexes.toArray(new Integer[tournamentSize]);
-        int bestSolutionIndex = 0;
+        int bestSolutionIndex = indexesArr[0];
 
         for(int index : indexesArr){
-            if(fitness[index] > fitness[bestSolutionIndex]){
+            if(fitness[index] < fitness[bestSolutionIndex]){
                 bestSolutionIndex = index;
             }
         }
@@ -159,13 +187,16 @@ public class GA {
 
 
     //two solutions chosen by tournament selection, swap x squares between the two
-    private void crossover(){
+    private void crossover(int currSolutionIndex){
         HashSet<Integer> solutionsIndex = new HashSet<>();
+        solutionsIndex.add(currSolutionIndex);
         
+        //Can be INFINITE LOOP HERE---------------------------------------------------
         while(solutionsIndex.size() < 2){
             int index = tournamentSelection();
             solutionsIndex.add(index);
         }
+        //----------------------------------------------------------------------------
 
         Integer[] chosenSolutions = solutionsIndex.toArray(new Integer[0]);
 
@@ -370,12 +401,7 @@ public class GA {
         };
 
         GA geneticAlgo = new GA(initialValues);
-        geneticAlgo.populate();
-        geneticAlgo.fitness();
-        geneticAlgo.tournamentSelection();
-        //hardcoded for mutation test
-        //geneticAlgo.mutation(0);
-        geneticAlgo.crossover();
+        geneticAlgo.solve();
     }
 
 }
